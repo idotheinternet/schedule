@@ -1,0 +1,99 @@
+#schedule {
+    position: relative;
+    width: 100%;
+    height: auto;
+    padding: 50px 200px;
+}
+#nav {
+    position: relative;
+    display: inline-flex;
+    width: 100%;
+    height: auto;
+    border-bottom: 1px solid #d9d9d9;
+}
+.schedule, .add-new {
+    font-size: 13px;
+    position: relative;
+    padding: 7px 10px 5px 10px;
+    cursor: pointer;
+    transition: all .13s;
+}
+.add-new.active {
+    background-color: #3367d6;
+    color: #fff;
+}
+.schedule:hover, .add-new:hover {
+    background-color: #3367d6;
+    color: #fff;
+}
+.divider {
+    position: absolute;
+    width: 1px;
+    background-color: #3367d6;
+    height: 50%;
+    left: 100%;
+    top: 50%;
+    transform: translate(-100%, -50%);
+    display: none;
+}
+.add-new {
+    color: #3367d6;
+}
+#container {
+    position: relative;
+    width: 100%;
+    height: auto;
+    padding: 50px 200px;
+}
+#customer {
+    position: relative;
+    width: 100%;
+    height: auto;
+    margin-bottom: 50px;
+}
+#date {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    width: 425px;
+    height: auto;
+    padding: 5px 0px;
+}
+.selection {
+    position: relative;
+    display: inline-flex;
+    align-items: flex-end;
+    margin-right: 10px;
+}
+.selection-label {
+    color: gray;
+    margin-right: 2px;
+}
+.selection select {
+    padding: 2px;
+}
+
+#scheduler {
+    position: relative;
+    width: 100%;
+    height: auto;
+    display: inline-flex;
+    padding-top: 5px;
+    border-top: 1px solid #e6e6e6;
+}
+.container {
+    position: relative;
+    width: 100%;
+    height: auto;
+}
+#scheduler .container:first-child {
+    width: 425px;
+    padding-right: 25px;
+    border-right: 1px solid #e6e6e6;
+    flex: none;
+}
+#container .container:last-child {
+    padding-left: 25px;
+}
+

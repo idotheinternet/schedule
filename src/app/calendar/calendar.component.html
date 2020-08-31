@@ -1,0 +1,21 @@
+<div id="header">
+    <div class="header-day">S</div>
+    <div class="header-day">M</div>
+    <div class="header-day">T</div>
+    <div class="header-day">W</div>
+    <div class="header-day">T</div>
+    <div class="header-day">F</div>
+    <div class="header-day">S</div>
+</div>
+<div id="calendar" *ngIf="days">
+    <div id="first" [ngStyle]="{'width': 14.275 * firstDay + '%'}">
+        <div id="firstinner"></div>
+    </div>
+    <div class="day" *ngFor="let item of days; let i = index;">
+        <div class="day-inner" [ngClass]="{'available': (showAvailable && getAvailable(item.day)), 'focused': lookupDate === item.day}" (click)="getCrews.emit(item.day)">
+            <span id="current" *ngIf="(getDay(item.day) === currentDay && getDay(item.day) > i) || (getDay(item.day) === 1 && i !== currentDay)">{{ getDay(item.day) === currentDay && getDay(item.day) > i ? getMonthName(0) : getMonthName(1) }}</span>
+            {{ getDay(item.day) }}
+            <div class="status"></div>
+        </div>
+    </div>
+</div>

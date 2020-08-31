@@ -1,0 +1,51 @@
+<div class="container top">
+    <div class="left">
+        <div class="info top">
+            <div class="info-label">Start Date:</div>
+            <div class="info-items">
+                mm
+                <select>
+                    <option *ngFor="let month of months; let i = index;" [attr.selected]="i === currentMonth ? '' : null">{{ month }}</option> 
+                </select>
+                dd
+                <select>
+                    <option *ngFor="let day of monthDays" [attr.selected]="day === currentDay ? '' : null">{{ day }}</option>
+                </select>
+                yyyy
+                <select class="no">
+                    <option>2020</option>
+                    <option>2021</option>
+                </select>
+            </div>
+        </div>
+        <div class="info">
+            <div class="info-label">Duration:</div>
+            <input class="number" type="number" value="6">
+            <div class="duration">
+                minutes<br>
+                <input type="radio">
+            </div>
+            <div class="duration">
+                hours<br>
+                <input type="radio">
+            </div>
+            <div class="duration">
+                days<br>
+                <input checked type="radio">
+            </div>
+        </div>
+        <div class="filler">start/end time placeholder..</div>
+        <div class="find">Find Available</div>
+    </div>
+    <div class="right">
+        <div class="schedule-info">schedule info placeholder..</div>
+    </div>
+</div>
+<div class="container bottom">
+    <div class="left">
+        <app-calendar [days]="days" [lookupDate]="lookupDate" [availableDays]="availableDays" [firstDay]="firstDay" [currentDay]="currentDay" [showAvailable]="showAvailable" (getCrews)="getCrews($event)"></app-calendar>
+    </div>
+    <div class="right calendar">
+        <app-installers [installers]="installers" [showAvailable]="showAvailable" (onCustom)="onCustom($event)"></app-installers>
+    </div>
+</div>

@@ -1,0 +1,9 @@
+<div id="header">Available Crews</div>
+<form id="form" *ngIf="installers">
+    <div class="installers" *ngFor="let item of installers" (click)="testing(radio, item.days)">
+        <input #radio class="btn" type="radio" name="installer" (change)="onChange($event)">
+        <div class="name">{{ item.name }}</div>
+        <div class="score" [ngClass]="{'g': item.score >= 90, 'y': item.score < 90 && item.score >= 80, 'r': item.score < 80 && item.score >= 70}">{{ item.score }}</div>
+    </div>
+</form>
+

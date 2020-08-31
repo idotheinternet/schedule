@@ -1,0 +1,17 @@
+.row {
+    position: relative;
+    display: inline-flex;
+    width: 100%;
+    height: auto;
+    padding: 3px 5px;
+}
+#header {
+    border-bottom: 1px solid #e6e6e6;
+}
+.col {
+    width: 14.275%;
+}
+.col.info-header {
+    font-weight: bold;
+    color: #3367d6;
+}

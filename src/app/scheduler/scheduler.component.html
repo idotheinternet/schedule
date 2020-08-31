@@ -1,0 +1,48 @@
+<div id="schedule">
+    <div id="nav">
+        <div class="schedule" *ngFor="let item of schedules">{{ item }}<div class="divider"></div></div>
+        <div class="add-new active">Add New +</div>
+    </div>
+    <router-outlet></router-outlet>
+</div>
+<!--
+<div id="container">
+    <div id="customer">
+        <app-customer></app-customer>
+    </div>
+
+    <div id="date" *ngIf="monthDays">
+        <div style="position: relative; font-weight: bold; color: #3367d6; margin-right: auto; transform: translateY(3px)">Start Date:</div>
+        <div class="selection">
+            <div class="selection-label">mm</div>
+            <select>
+                <option *ngFor="let month of months; let i = index;" [attr.selected]="i === currentMonth ? '' : null">{{ month }}</option> 
+            </select>
+        </div>
+        <div class="selection">
+            <div class="selection-label">dd</div>
+            <select>
+                <option *ngFor="let day of monthDays" [attr.selected]="day === currentDay ? '' : null">{{ day }}</option>
+            </select>
+        </div>
+        <div class="selection">
+            <div class="selection-label">yyyy</div>
+            <select>
+                <option>2020</option>
+                <option>2021</option>
+            </select>
+        </div>
+    </div>
+    <div style="position: relative; font-weight: bold; color: #3367d6; margin-right: auto; transform: translateY(3px)">Duration:</div>
+
+    
+    <div id="scheduler">
+        <div class="container">
+            <app-calendar [days]="days" [lookupDate]="lookupDate" [availableDays]="availableDays" [firstDay]="firstDay" [currentDay]="currentDay" [showAvailable]="showAvailable" (getCrews)="getCrews($event)"></app-calendar>
+        </div> 
+        <div class="container">
+            <app-installers [installers]="installers" [showAvailable]="showAvailable" (onCustom)="onCustom($event)"></app-installers>
+        </div>
+    </div>
+</div>
+-->
