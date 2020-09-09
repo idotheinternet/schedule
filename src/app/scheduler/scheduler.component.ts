@@ -1,11 +1,17 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-export interface WorkCrew {
+import { Component, OnInit } from '@angular/core';
+
+export interface Installer {
   name: string;
   score: number;
-  days: number[];
-  details?: string[];
 }
+
+export interface Day {
+  date: Date;
+  status?: number;
+  installers?: Installer[];
+  unavailables?: Installer[];
+}
+
 @Component({
   selector: 'app-scheduler',
   templateUrl: './scheduler.component.html',
@@ -13,119 +19,120 @@ export interface WorkCrew {
 })
 export class SchedulerComponent implements OnInit {
 
-  constructor(private activeRoute: ActivatedRoute, private router: Router) { }
-
-  schedules: string[] = ['Aug 28, 2020'];
-
-  showAvailable: boolean;
-  allInstallers: WorkCrew[];
-  installers: WorkCrew[];
-  days: any[];
+  schedule: any;
+  calendar: Day[];
+  selectedDate: Date;
   firstDay: number;
-  currentDay: number;
-  currentMonth: number;
-  available: boolean;
-  availableDays: Date[];
-  lookupDate: Date;
-  startDate: Date = new Date();
-  months: string[] = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  monthDays: number[];
+  rangeMode: boolean;
+  installerView: boolean;
+  availableView: boolean = true;
+  idx: number = 0;
+  installer: Installer;
+  showExtra: boolean;
 
-  ngOnInit() {
-    this.router.navigate(['new'], {relativeTo: this.activeRoute});
-    this.setMonthDays();
+  showEx(): void {
+    this.showExtra = !this.showExtra;
+  }
+
+  ngOnInit(): void {
+    //this.setLocal();
     this.setCalendar();
-    this.setInstallers();
   }
 
-  setMonthDays(): void {
+  setLocal(): void {
+    !localStorage.getItem('schedules') ? 
+    localStorage.setItem('schedules', JSON.stringify([])) : 
+    this.schedule = JSON.parse(localStorage.getItem('shedules'))[0];
+  }
+
+  initMonth(date: Date): Day[] {
     let i: number = 1;
-    const date: Date = this.startDate,
-    len: number = Number(new Date(date.getFullYear(), this.currentMonth = date.getMonth(), 0).getDate()), 
-    arr: number[] = [];
-    for(; i <= len; i++) arr.push(i);
-    this.monthDays = arr;
-  }
-
-  onCustom(e): void {
-    this.showAvailable = e.showAvailable;
-    this.availableDays = e.availableDays;
-  }
-
-  getCrews(e): void {
-    if(e === this.lookupDate) return this.installers = this.allInstallers, this.lookupDate = null;
-    let i: number = 0,
-    j: number,
-    daysLen: number,
-    installer: any;
-    const installers = this.installers,
-    len: number = installers.length,
-    arr: any[] = [];
-    this.lookupDate = e;
-    for(; i < len; i++) {
-      installer = installers[i];
-      j = 0;
-      daysLen = installer.days.length;
-      for(j; j < daysLen; j++) if(installer.days[j] === e) arr.push(installer);
-    }
-    this.installers = arr;
-  }
-
-  setInstallers(): void { 
-    let i: number = 0;
-    const len: number = 50,
-    arr: WorkCrew[] = []
-    for(; i < len; i++) {
-      arr.push({
-        name: 'Crew ' + Math.floor(Math.random() * 1000),
-        score: Math.floor(50 + (Math.random() * 50)),
-        days: this.setInstallerDays()
-      });
-    }
-    arr.sort((a, b) => b.score - a.score);
-    this.installers = this.allInstallers = arr;
-  }
-
-  setStaus(): void {
-    let i: number = 0;
-    const len: number = 50,
-    arr: WorkCrew[] = [];
-    for(; i < len; i++) {
-      arr.push({
-        name: 'Crew ' + Math.floor(Math.random() * 1000),
-        score: Math.floor(50 + (Math.random() * 50)),
-        days: this.setInstallerDays()
-      })
-    }
-  }
-
-  setInstallerDays(): number[] {
-    let i: number = 0;
-    const days = this.days,
-    len: number = days.length,
-    arr: number[] = [];
-    for(; i < len; i++) if(days[i].available && Math.floor(Math.random() * 3) === 1) arr.push(days[i].day);
+    const len: number = date.getDate(),
+    arr: Day[] = [];
+    console.log(len);
+    for(; i <= len; i++) arr.push({date: new Date(date.getFullYear(), date.getMonth(), i)});
     return arr;
   }
 
   setCalendar(): void {
-    let i: number = 0,
-    available: number,
-    arr: any[] = [];
     const date: Date = new Date(),
-    firstDay: number = this.firstDay = date.getDay(),
-    currentDay: number = i = this.currentDay = date.getDate(),
-    monthDays: number = Number(new Date(date.getFullYear(), date.getMonth(), 0).getDate()),
-    remainder: number = (34 - firstDay) - (monthDays - currentDay);
-    for(i; i <= monthDays; i++) arr.push({day: new Date(date.getFullYear(), date.getMonth(), i), status: available = Math.floor(Math.random() *4), available: (available < 3)});
-    i = 0;
-    for(i; i < remainder; i++) arr.push({day: new Date(date.getFullYear(), date.getMonth() + 1, i+1), status: available = Math.floor(Math.random() *4), available: (available < 3)});
-    this.days = arr;
+    arr: Day[] = [];
+    let i: number = 0,
+    month: number = date.getMonth();
+    for(; i < 13; i++) {
+      let day: number = !i ? date.getDate() : 1;
+      const len: number = Number(new Date(date.getFullYear(), month+1, 0).getDate());
+      for(; day <= len; day++) arr.push({ date: new Date(date.getFullYear(), month, day)});
+      month+=1;
+    }
+    this.selectedDate = arr[0].date;
+    this.firstDay = date.getDay();
+    this.calendar = arr;
   }
 
-  getMonthName(val: number): string {
-    const date: Date = new Date();
-    return new Date(date.getFullYear(), date.getMonth()+val).toLocaleString('default', { month: 'short' });
+  getDay(date: Date): number {
+    return date.getDate();
+  }
+
+  selectDay(date: Date, idx: number): void {
+    if(idx === this.idx) return;
+    if(this.installerView && this.calendar[idx].status === undefined || this.calendar[idx].status === 2) this.installerView = false;
+    this.selectedDate = date;
+    this.idx = idx;
+    console.log(this.idx);
+  }
+
+  getSelectedDate(): string {
+    return this.selectedDate.toLocaleDateString('default', {month: 'long', day: 'numeric', year: 'numeric'});
+  }
+
+  initRange(): void {
+    this.rangeMode = !this.rangeMode;
+  }
+
+  setInstallers(): Installer[] {
+    let i: number = 0;
+    const len: number = Math.floor(Math.random() * 15) + 1,
+    arr: Installer[] = [];
+    for(; i < len; i++) arr.push({
+      name: 'Crew ' + Math.floor(Math.random() * 1000),
+      score: Math.floor(50 + (Math.random() * 50))
+    });
+    arr.sort((a, b) => b.score - a.score);
+    return arr;
+  }
+
+  findAvailable(): void {
+    let i: number = this.idx,
+    status: number;
+    const len: number = i + (!this.rangeMode ? 1 : 7);
+    for(; i < len; i++) {
+      status = Math.floor(Math.random() * 3);
+      this.calendar[i].status = status;
+      if(status !== 2) {
+        this.calendar[i].installers = this.setInstallers();
+        this.calendar[i].unavailables = this.setInstallers();
+      } 
+    }
+    if(this.rangeMode) this.rangeMode = false;
+  }
+
+  getAvailability(): string {
+    const status = this.calendar[this.idx].status;
+    return !status ? 'OPEN' : status < 2 ? 'LOCKED - Please consult your manager before scheduling.' : 'CLOSED';
+  }
+
+  initView(view: boolean): void {
+    if(view && (this.calendar[this.idx].status === undefined || this.calendar[this.idx].status === 2)) return;
+    this.installerView = view;
+  }
+
+  initAvailable(view: boolean): void {
+    this.availableView = view;
+  }
+
+  selectInstaller(installer: Installer): void {
+    this.installer = installer;
   }
 
 }
