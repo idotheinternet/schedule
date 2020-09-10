@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { EmptyError } from 'rxjs';
 
 export interface Installer {
   name: string;
   score: number;
+  expanded?: boolean;
 }
 
 export interface Day {
@@ -26,12 +28,51 @@ export class SchedulerComponent implements OnInit {
   rangeMode: boolean;
   installerView: boolean;
   availableView: boolean = true;
+  azView: boolean;
   idx: number = 0;
   installer: Installer;
   showExtra: boolean;
+  amt: number = 1;
+  duration: number = 0;
+  time: number = 8 + this.amt;
+  trueTime: number = 1;
+  isAm: boolean = true;
+
+  changeTime(elem: HTMLInputElement): void {
+    const val: number = Number(elem.value);
+    if(val === 13) {
+      this.isAm = false;
+      elem.value = "1";
+      this.time = 1 + this.amt;
+      return;
+    }
+    if(!val) {
+      this.isAm = true;
+      elem.value = "12";
+      this.time = this.amt;
+      return;
+    }
+    this.time = (val + this.amt <= 12 ? (val + this.amt) : this.amt);
+  }
+
+  changeAmt(elem: HTMLInputElement): void {
+    this.amt = Number(elem.value);
+    //this.time = (this.time + this.amt <= 12 ? (this.time + this.amt) : this.amt);
+    console.log(this.amt);
+  }
+
+  changeDuration(elem: HTMLSelectElement): void {
+    this.duration = Number(elem.value);
+    console.log(this.duration);
+  }
 
   showEx(): void {
     this.showExtra = !this.showExtra;
+  }
+
+  expand(installer: Installer): void {
+    installer.expanded = !installer.expanded;
+    console.log(installer.expanded);
   }
 
   ngOnInit(): void {
@@ -96,7 +137,8 @@ export class SchedulerComponent implements OnInit {
     arr: Installer[] = [];
     for(; i < len; i++) arr.push({
       name: 'Crew ' + Math.floor(Math.random() * 1000),
-      score: Math.floor(50 + (Math.random() * 50))
+      score: Math.floor(50 + (Math.random() * 50)), 
+      expanded: false
     });
     arr.sort((a, b) => b.score - a.score);
     return arr;
@@ -129,6 +171,8 @@ export class SchedulerComponent implements OnInit {
 
   initAvailable(view: boolean): void {
     this.availableView = view;
+    if(view === null) this.calendar[this.idx].installers.sort((a, b) => Number(a.name.split(" ")[1]) - Number(b.name.split(" ")[1]));
+    if(view) this.calendar[this.idx].installers.sort((a, b) => b.score - a.score);
   }
 
   selectInstaller(installer: Installer): void {

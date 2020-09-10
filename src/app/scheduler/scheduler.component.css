@@ -81,22 +81,24 @@
 #main {
     position: relative;
     display: inline-flex;
+    flex-wrap: wrap;
     width: 100%;
     height: auto;
     border-top: 1px solid #d9d9d9;
 }
-#left {
+.left {
     position: relative;
     flex: none;
     width: 445px;
     padding-right: 25px;
     height: auto;
 }
-#right {
+.right {
     position: relative;
     width: calc(100% - 445px);
     height: auto;
     padding-left: 25px;
+    padding-top: 25px;
     border-left: 1px solid #d9d9d9;
 }
 .item {
@@ -115,7 +117,6 @@
     transform: translate(-100%, -50%);
 }
 #find {
-    display: none;
     background-color: #3367d6;
     color: #fff;
     font-weight: bold;
@@ -240,10 +241,11 @@
     margin-left: 35px;
     color: gray;
     font-weight: bold;
+    white-space: nowrap;
     cursor: pointer;
 }
 .selection.active {
-    color: #000;
+    color: #3367d6;
     border-color: #3367d6;
 }
 .selection.disabled {
@@ -298,13 +300,49 @@
 }
 .container {
     position: relative;
-    width: 50%;
+    width: 100%;
     height: auto;
+}
+.installer-header {
+    position: relative;
+    display: inline-flex;
+    width: 100%;
+    height: auto;
+    background-color: #3367d6; 
+    padding: 5px;
+    border-top-left-radius: 6px; 
+    border-top-right-radius: 6px;
+}
+.installer-header-col {
+    font-weight: bold;
+    color: #fff;
+    flex: 1;
+}
+.num {
+    width: 45px;
+    margin-right: 5px;
+}
+.num, .sel {
+    padding: 3px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #3367d6;
+    border: 1px solid #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
 }
 form {
     position: relative;
     width: 100%;
     height: auto;
+    background-color: #f2f2f2;
+    border-radius: 6px;
+}
+.installer-outer {
+    position: relative;
+    width: 100%;
+    height: auto;
+    border-bottom: 1px solid #d9d9d9;
 }
 .installer {
     position: relative;
@@ -314,22 +352,36 @@ form {
     height: 50px;
     padding: 0px 5px;
 }
-input {
+.installer.b {
+    border-bottom: 1px solid #d9d9d9;
+}
+.installer.expanded {
+    height: auto;
+    padding: 10px 5px;
+}
+form .installer-outer:last-child {
+    border-bottom: none;
+}
+.radio {
     width: 16px;
     height: 16px;
-    margin-right: 10px;
+    margin-right: 5px;
     cursor: pointer;
 }
-.installer .label {
-    font-weight: normal;
-    color: #000;
+.installer-col {
+    flex: 1;
 }
-.installer.active .label {
+.installer-right {
+    position: absolute;
+    display: inline-flex;
+    align-items: center;
+    left: 100%;
+    top: 50%;
+    transform: translate(-100%, -50%);
+}
+.installer.active .in {
     font-weight: bold;
     color: #3367d6;
-}
-.container .installer:nth-child(odd) {
-    background-color: #f2f2f2;
 }
 .score {
     display: flex;
@@ -351,4 +403,25 @@ input {
 }
 .score.r {
     color: #ff5050;
+}
+.installer-extra {
+    position: relative;
+    width: 100%;
+    height: auto;
+    padding: 0px 5px;
+}
+.installer-extra-header {
+    position: relative;
+    width: 100%;
+    height: auto;
+    display: inline-flex;
+    padding-bottom: 1px;
+    border-bottom: 1px solid #3367d6;
+}
+.installer-extra-con {
+    position: relative;
+    width: 100%;
+    height: auto;
+    display: inline-flex;
+    padding: 10px 0px;
 }
