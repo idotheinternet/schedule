@@ -46,6 +46,37 @@
     display: inline-flex;
     width: 100%;
     height: auto;
+    margin-bottom: 25px;
+}
+.work-order-con {
+    position: relative;
+    width: 50%;
+    height: auto;
+}
+.work-order-header {
+    width: 100%;
+    height: auto;
+    font-weight: bold;
+    color: #3367d6;
+    border-bottom: 1px solid;
+    margin-bottom: 5px;
+}
+.work-order-cols {
+    position: relative;
+    display: inline-flex;
+    width: 100%;
+    height: auto;
+}
+.work-order-col {
+    flex: 1;
+}
+.work-order-col div {
+    padding: 3px;
+}
+.work-order-col div.t {
+    background-color: #3367d6;
+    color: #fff;
+    font-weight: bold;
 }
 #main {
     position: relative;

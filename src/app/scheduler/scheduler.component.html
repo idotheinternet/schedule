@@ -24,9 +24,64 @@
     <div class="category-header">Work Category <div>#</div></div>
     <div class="category-info">Project Preference: Carpet <div>133</div></div>
 </div>
-<div style="color: #3367d6; text-decoration: underline; font-size: 13px; cursor: pointer;" (click)="showEx()">{{ showExtra ? 'Show' : 'Hide' }} extra work order details</div>
+<div style="color: #3367d6; text-decoration: underline; font-size: 13px; cursor: pointer; margin-bottom: 25px;" (click)="showEx()">{{ showExtra ? 'Hide' : 'Show' }} extra work order details</div>
 <div class="work-order" *ngIf="showExtra">
-    
+    <div class="work-order-con" style="margin-right: 25px;">
+        <div class="work-order-header">Work Order Items</div>
+        <div class="work-order-cols">
+            <div class="work-order-col" style="flex: none">
+                <div class="t">Name</div>
+                <div>BSC CARPET - GLUE</div>
+                <div>EXTERIOR GLUE DOWN INSTALLATION WHERE DRY</div>
+                <div>REMOVE AND HAULAWAY CARPET AND PAD</div>
+                <div>INSTALL ON CONCRETE STEPS</div>
+            </div>
+            <div class="work-order-col">
+                <div class="t">#</div>
+                <div>23</div>
+                <div>23</div>
+                <div>153</div>
+                <div>1</div>
+            </div>
+            <div class="work-order-col">
+                <div class="t">Unit Price</div>
+                <div>$3.20</div>
+                <div>$0.50</div>
+                <div>$0.15</div>
+                <div>$6.00</div>
+            </div>
+            <div class="work-order-col">
+                <div class="t">Total</div>
+                <div>$73.60</div>
+                <div>$11.60</div>
+                <div>$22.95</div>
+                <div>$6.00</div>
+            </div>
+        </div> 
+    </div>
+    <div class="work-order-con" style="margin-right: 25px;">
+        <div class="work-order-header">Work Order Notes</div>
+        <div class="work-order-cols">
+            <div class="work-order-col" style="flex: none">
+                <div class="t">Subject</div>
+                <div>Carpet Roll</div>
+                <div>Installer</div>
+                <div>Home Depot Note</div>
+            </div>
+            <div class="work-order-col" style="flex: none">
+                <div class="t">Text</div>
+                <div>One roll in warehouse (Arrived 5/2/16)</div>
+                <div>If you have any issues with the install please call Kathy ...</div>
+                <div>Measure #11491541 Calc DateTime 04/24/16 10:56:10</div>
+            </div>
+            <div class="work-order-col">
+                <div class="t">Date</div>
+                <div>5/2</div>
+                <div>4/25</div>
+                <div>2/25</div>
+            </div>
+        </div> 
+    </div>
 </div>
 <div id="nav"></div>
 <div id="main">
