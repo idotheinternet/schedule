@@ -78,13 +78,57 @@
     color: #fff;
     font-weight: bold;
 }
+#nav {
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: auto;
+    z-index: 1;
+}
+.nav-item {
+    position: relative;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color .1s;
+    font-weight: bold;
+}
+.nav-item:not(.active):hover {
+    background-color: #f2f2f2;
+}
+.nav-item.active {
+    background-color: #3367d6;
+    color: #fff;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, .3);
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+}
+.nav-pointer {
+    position: absolute;
+    display: none;
+    width: 8px;
+    height: 8px;
+    left: 50%;
+    top: calc(100% + 3px);
+    transform: translate(-50%, -100%) rotate(45deg);
+    background-color: #3367d6;
+}
+.nav-item.active .nav-pointer {
+    display: block;
+}
+.border-bottom {
+    position: absolute;
+    top: calc(100% - 1px);
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: #d9d9d9;
+}
 #main {
     position: relative;
     display: inline-flex;
-    flex-wrap: wrap;
     width: 100%;
     height: auto;
-    border-top: 1px solid #d9d9d9;
 }
 .left {
     position: relative;
@@ -95,11 +139,157 @@
 }
 .right {
     position: relative;
-    width: calc(100% - 445px);
+    width: 100%;
     height: auto;
     padding-left: 25px;
     padding-top: 25px;
     border-left: 1px solid #d9d9d9;
+}
+.schedule-con {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    height: auto;
+    border-radius: 6px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, .3);
+    overflow: hidden;
+}
+.schedules-con {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    height: auto;
+}
+.schedule-col {
+    position: relative;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+.schedule-header {
+    padding: 5px;
+    background-color: #3367d6;
+    color: #fff;
+    font-weight: bold;
+}
+.schedule-val {
+    display: flex;
+    align-items: center;
+    height: 50px;
+    padding: 0px 5px;
+    color: #3367d6;
+    background-color: #fff;
+    font-weight: bold;
+}
+.start-time-con {
+    position: relative;
+    flex: none;
+    width: 100%;
+    padding: 10px 5px;
+    border-top: 1px solid #d9d9d9;
+}
+.start-time-label {
+    width: 100%;
+    height: auto;
+    flex: none;
+    font-weight: bold;
+    color: #3367d6;
+    margin-bottom: 10px;
+}
+.start-picker {
+    position: relative;
+    display: inline-flex;
+    width: 100%;
+    height: auto;
+}
+.time-unit {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    height: auto;
+}
+.time-unit-inner {
+    width: 10px;
+    height: 10px;
+    border: 1px solid #d9d9d9;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, .5);
+    cursor: pointer;
+}
+.time-unit-inner.l {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: bold;
+    color: #3367d6;
+}
+
+
+.picker-line {
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    background-color: #d9d9d9;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+}
+.picker-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 12px;
+    background-color: #3367d6;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, .5);
+    margin-right: 1.5%;
+}
+.picker-dot.l {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    color: #fff;
+    width: 25px;
+    height: 25px;
+    border-radius: 25px;
+}
+.picker-option {
+    display: inline-flex;
+    flex: 1;
+    height: 20px;
+    border-left: 1px solid #fff;
+}
+.schedule-con.minimized {
+    width: 50%;
+    flex-direction: column;
+}
+.schedule-con.minimized .schedule-col {
+    flex-direction: row;
+    padding: 5px 0px;
+    border-bottom: 1px solid #f2f2f2;
+}
+.schedule-col.last {
+    border-bottom: none;
+}
+.schedule-con.minimized .schedule-header {
+    background-color: unset;
+    color: gray;
+    flex: none;
+}
+.schedule-con.minimized .schedule-val {
+    height: unset;
+    width: 100%;
+    justify-content: flex-end;
 }
 .item {
     position: relative;
@@ -312,11 +502,28 @@
     padding: 5px;
     border-top-left-radius: 6px; 
     border-top-right-radius: 6px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, .3);
 }
 .installer-header-col {
     font-weight: bold;
     color: #fff;
     flex: 1;
+}
+.create {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    transform: translateX(-100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold;
+    height: 100%;
+    padding: 0px 10px;
+    background-color: #4287f5;
+    color: #fff;
+    cursor: pointer;
 }
 .num {
     width: 45px;

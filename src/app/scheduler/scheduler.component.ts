@@ -22,6 +22,7 @@ export interface Day {
 export class SchedulerComponent implements OnInit {
 
   schedule: any;
+  schedules: any[] = ['9/11/2020'];
   calendar: Day[];
   selectedDate: Date;
   firstDay: number;
@@ -37,6 +38,16 @@ export class SchedulerComponent implements OnInit {
   time: number = 8 + this.amt;
   trueTime: number = 1;
   isAm: boolean = true;
+  scheduleView: boolean;
+
+  ngOnInit(): void {
+    //this.setLocal();
+    this.setCalendar();
+  }
+
+  createSchedule(): void {
+    this.scheduleView = !this.scheduleView;
+  }
 
   changeTime(elem: HTMLInputElement): void {
     const val: number = Number(elem.value);
@@ -73,11 +84,6 @@ export class SchedulerComponent implements OnInit {
   expand(installer: Installer): void {
     installer.expanded = !installer.expanded;
     console.log(installer.expanded);
-  }
-
-  ngOnInit(): void {
-    //this.setLocal();
-    this.setCalendar();
   }
 
   setLocal(): void {

@@ -83,9 +83,20 @@
         </div> 
     </div>
 </div>
-<div id="nav"></div>
+<div id="nav">
+    <div class="border-bottom"></div>
+    <div class="nav-item" *ngFor="let item of schedules">
+        {{ item }}
+        <div class="nav-pointer"></div>
+    </div>
+    <div class="nav-item active" style="margin-right: auto;">
+        New Schedule +
+        <div class="nav-pointer"></div>
+    </div>
+    <!--<div class="create" style="border-radius: 6px">Create</div>-->
+</div>
 <div id="main">
-    <div class="left">
+    <div class="left" *ngIf="!scheduleView">
         <div class="item" style="border-bottom: none;">
             <div class="label">1-Week Range:</div>
             <div class="items pill" (click)="initRange()" [ngClass]="{'active': rangeMode}">
@@ -112,23 +123,95 @@
             </div>
         </div>
     </div>
-    <div class="right">
-        <div style="position: relative; width: 100%; height: auto; box-shadow: 0px 0px 5px rgba(0, 0, 0, .3); border-radius: 6px;">
+    <div class="right" [ngStyle]="{'padding-left': !scheduleView ? '25px': '0px', 'border-left': !scheduleView ? '1px solid #d9d9d9' : 'none'}">
+        <div class="schedules-con">
+            <div class="schedule-con">
+                <div class="schedule-col">
+                    <div class="schedule-header">Schedule Date</div>
+                    <div class="schedule-val">{{ getSelectedDate() }}</div>
+                </div>
+                <div class="schedule-col">
+                    <div class="schedule-header">Assigned Installer</div>
+                    <div class="schedule-val" [ngStyle]="{'font-weight': installer ? 'bold' : 'normal', 'color': installer ? '#3367d6': 'gray'}">{{ installer ? installer.name : 'Unassigned' }}</div>
+                </div>
+                <div class="schedule-col last">
+                    <div class="schedule-header">Job Duration</div>
+                    <div class="schedule-val">
+                        <div style="display: inline-flex; align-items: center;">
+                            <input #num class="num" type="number" value="1" (change)="changeAmt(num)">
+                            <select class="sel" #durations (change)="changeDuration(durations)">
+                                <option selected value="0">{{ amt > 1 ? 'Days' : 'Day' }}</option>
+                                <option value="1">{{ amt > 1 ? 'Hours' : 'Hour' }}</option>
+                                <option value="2">{{ amt > 1 ? 'Minutes' : 'Minute' }}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="start-time-con" *ngIf="duration">
+                    <div class="start-time-label">Start Time: 8AM</div>
+                    <div class="start-picker">
+                        <div class="picker-line"></div>
+                        <div class="time-unit"><div class="time-unit-inner l">8</div></div>
+                        <div class="time-unit"><div class="time-unit-inner"></div></div>
+                        <div class="time-unit"><div class="time-unit-inner"></div></div>
+                        <div class="time-unit"><div class="time-unit-inner"></div></div>
+                        <div class="time-unit"><div class="time-unit-inner l">9</div></div>
+                        <div class="time-unit"><div class="time-unit-inner"></div></div>
+                        <div class="time-unit"><div class="time-unit-inner"></div></div>
+                        <div class="time-unit"><div class="time-unit-inner"></div></div>
+                        <div class="time-unit"><div class="time-unit-inner l">10</div></div>
+                        <div class="time-unit"><div class="time-unit-inner"></div></div>
+                        <div class="time-unit"><div class="time-unit-inner"></div></div>
+                        <div class="time-unit"><div class="time-unit-inner"></div></div>
+                        <div class="time-unit"><div class="time-unit-inner l">11</div></div>
+                        <div class="time-unit"><div class="time-unit-inner"></div></div>
+                        <div class="time-unit"><div class="time-unit-inner"></div></div>
+                        <div class="time-unit"><div class="time-unit-inner"></div></div>
+                        <div class="time-unit"><div class="time-unit-inner l">12</div></div>
+                        <div class="time-unit"><div class="time-unit-inner"></div></div>
+                        <div class="time-unit"><div class="time-unit-inner"></div></div>
+                        <div class="time-unit"><div class="time-unit-inner"></div></div>
+                        <div class="time-unit"><div class="time-unit-inner l">1</div></div>
+                        <div class="time-unit"><div class="time-unit-inner"></div></div>
+                        <div class="time-unit"><div class="time-unit-inner"></div></div>
+                        <div class="time-unit"><div class="time-unit-inner"></div></div>
+                        <div class="time-unit"><div class="time-unit-inner l">2</div></div>
+                        <div class="time-unit"><div class="time-unit-inner"></div></div>
+                        <div class="time-unit"><div class="time-unit-inner"></div></div>
+                        <div class="time-unit"><div class="time-unit-inner"></div></div>
+                        <div class="time-unit"><div class="time-unit-inner l">3</div></div>
+                        <div class="time-unit"><div class="time-unit-inner"></div></div>
+                        <div class="time-unit"><div class="time-unit-inner"></div></div>
+                        <div class="time-unit"><div class="time-unit-inner"></div></div>
+                        <div class="time-unit"><div class="time-unit-inner l">4</div></div>
+                        <div class="time-unit"><div class="time-unit-inner"></div></div>
+                        <div class="time-unit"><div class="time-unit-inner"></div></div>
+                        <div class="time-unit"><div class="time-unit-inner"></div></div>
+                        <div class="time-unit"><div class="time-unit-inner l">5</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--
+        <div style="position: relative; width: 100%; height: auto; box-shadow: 0px 0px 5px rgba(0, 0, 0, .3); border-radius: 6px; overflow: hidden;">
             <div class="installer-header">
                 <div class="installer-header-col">Schedule Date</div>
                 <div class="installer-header-col">Job Duration</div>
                 <div class="installer-header-col">Start - End Time</div>
                 <div class="installer-header-col">Assigned Installer</div>
+                <div class="create" (click)="createSchedule()">Create</div>
             </div>
             <div class="installer" style="border: 1px solid #d9d9d9; border-top: none; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;">
                 <div class="installer-col" style="font-weight: bold; color: #3367d6">{{ getSelectedDate() }}</div>
                 <div class="installer-col" style="display: inline-flex; align-items: center;">
+
                     <input #num class="num" type="number" value="1" (change)="changeAmt(num)">
                     <select class="sel" #durations (change)="changeDuration(durations)">
                         <option selected value="0">{{ amt > 1 ? 'Days' : 'Day' }}</option>
                         <option value="1">{{ amt > 1 ? 'Hours' : 'Hour' }}</option>
                         <option value="2">{{ amt > 1 ? 'Minutes' : 'Minute' }}</option>
                     </select>
+
                 </div>
                 <div class="installer-col" style="font-weight: bold; color: #3367d6" *ngIf="!duration">8AM - 5PM</div>
                 <div class="installer-col" style="font-weight: bold; color: #3367d6" *ngIf="duration" style="display: inline-flex; align-items: center;">
@@ -138,6 +221,7 @@
                 <div class="installer-col" [ngStyle]="{'font-weight': installer ? 'bold' : 'normal', 'color': installer ? '#3367d6': 'gray'}">{{ installer ? installer.name : 'Unassigned' }}</div>
             </div>
         </div>
+    -->
         <div class="container">
             <div class="item" style="border-bottom: none;">
                 <div class="label">Status:&nbsp;<div id="small" *ngIf="calendar[idx].status === undefined" (click)="findAvailable()">Get Availability</div><div class="{{ !calendar[idx].status ? 'g' : calendar[idx].status === 1 ? 'y' : 'r' }}" id="status" *ngIf="calendar[idx].status !== undefined">{{ getAvailability() }}</div></div>
@@ -156,7 +240,7 @@
                     </div>
                 </div> 
             </div>
-            <div style="position: relative; width: 100%; height: auto;" *ngIf="calendar[idx].status !== undefined && calendar[idx].status !== 2">
+            <div style="position: relative; width: 100%; height: auto; overflow: hidden;" *ngIf="calendar[idx].status !== undefined && calendar[idx].status !== 2">
                 <form *ngIf="availableView || availableView === null">
                     <div class="installer-header">
                         <div class="installer-header-col">Name</div>
