@@ -320,7 +320,7 @@
     cursor: not-allowed;
 }
 #days div {
-    width: 60px;
+    width: 14.285%;
     text-align: center;
     color: #3367d6;
     font-weight: bold;
@@ -368,7 +368,7 @@
 }
 .day {
     position: relative;
-    width: 60px;
+    width: 14.275%;
     height: 60px;
     padding: 5px;
     border-bottom: 1px solid #d9d9d9;
@@ -631,4 +631,16 @@ form .installer-outer:last-child {
     height: auto;
     display: inline-flex;
     padding: 10px 0px;
+}
+@media only screen and (max-width: 500px) {
+    .left {
+        padding: 0px;
+        width: 100%;
+    }
+    .right {
+        border-left: none;
+    }
+    #calendar {
+        max-height: calc(100vh - 210px);
+    }
 }

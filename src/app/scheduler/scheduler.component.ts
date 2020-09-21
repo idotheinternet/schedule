@@ -39,14 +39,21 @@ export class SchedulerComponent implements OnInit {
   trueTime: number = 1;
   isAm: boolean = true;
   scheduleView: boolean;
+  isMobile: boolean;
+  listView: boolean;
 
   ngOnInit(): void {
-    //this.setLocal();
     this.setCalendar();
+    this.getWindowWidth();
+    this.isMobile = window.innerWidth <= 500;
   }
 
-  createSchedule(): void {
-    this.scheduleView = !this.scheduleView;
+  showScheduleView(): void {
+    this.scheduleView = true;
+  }
+
+  showNewView(): void {
+    this.scheduleView = false;
   }
 
   changeTime(elem: HTMLInputElement): void {
@@ -121,11 +128,16 @@ export class SchedulerComponent implements OnInit {
     return date.getDate();
   }
 
+  getMonthLabel(date: Date): string {
+    return date.toLocaleDateString('default', {month: 'short'});
+  }
+
   selectDay(date: Date, idx: number): void {
-    if(idx === this.idx) return;
-    if(this.installerView && this.calendar[idx].status === undefined || this.calendar[idx].status === 2) this.installerView = false;
     this.selectedDate = date;
     this.idx = idx;
+    //if(idx === this.idx) return;
+    if(this.installerView && this.calendar[idx].status === undefined || this.calendar[idx].status === 2) this.installerView = false;
+    if(this.isMobile && this.calendar[idx].status !== undefined) this.listView = true;
     console.log(this.idx);
   }
 
@@ -151,10 +163,11 @@ export class SchedulerComponent implements OnInit {
   }
 
   findAvailable(): void {
+    if(this.calendar[this.idx].status !== undefined) return;
     let i: number = this.idx,
     status: number;
     const len: number = i + (!this.rangeMode ? 1 : 7);
-    for(; i < len; i++) {
+    for(; i < len; i++) if(this.calendar[i].status === undefined) {
       status = Math.floor(Math.random() * 3);
       this.calendar[i].status = status;
       if(status !== 2) {
@@ -181,8 +194,16 @@ export class SchedulerComponent implements OnInit {
     if(view) this.calendar[this.idx].installers.sort((a, b) => b.score - a.score);
   }
 
-  selectInstaller(installer: Installer): void {
-    this.installer = installer;
+  selectInstaller(elem: HTMLInputElement, installer: Installer): void {
+    elem.checked = !(this.installer && this.installer.name === installer.name);
+    this.installer = (elem.checked ? installer : null);
+  }
+
+  getWindowWidth(): void {
+    window.onresize = () => {
+      this.isMobile = window.innerWidth <= 500;
+      console.log(window.innerWidth);
+    }
   }
 
 }

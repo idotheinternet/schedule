@@ -1,3 +1,4 @@
+<!--
 <div class="customer-info">
     <div class="customer-labels">
         <div>Customer:</div>
@@ -83,25 +84,40 @@
         </div> 
     </div>
 </div>
+-->
 <div id="nav">
     <div class="border-bottom"></div>
-    <div class="nav-item" *ngFor="let item of schedules">
+    <div class="nav-item" *ngFor="let item of schedules" (click)="showScheduleView()" [ngClass]="{'active': scheduleView}">
         {{ item }}
         <div class="nav-pointer"></div>
     </div>
-    <div class="nav-item active" style="margin-right: auto;">
+    <div class="nav-item" style="margin-right: auto;" (click)="showNewView()" [ngClass]="{'active': !scheduleView}">
         New Schedule +
         <div class="nav-pointer"></div>
     </div>
     <!--<div class="create" style="border-radius: 6px">Create</div>-->
 </div>
 <div id="main">
-    <div class="left" *ngIf="!scheduleView">
-        <div class="item" style="border-bottom: none;">
+    <div class="left" *ngIf="!scheduleView" [ngStyle]="{'display': (isMobile && listView) ? 'none' : 'block'}">
+        <div class="item">
             <div class="label">1-Week Range:</div>
             <div class="items pill" (click)="initRange()" [ngClass]="{'active': rangeMode}">
                 <div class="slider"></div>
             </div>
+        </div>
+        <div class="item" style="border-bottom: none;">
+            <div class="label">Job Duration:</div>
+            <div style="display: inline-flex; align-items: center;">
+                <input #num class="num" type="number" value="1" (change)="changeAmt(num)">
+                <select class="sel" #durations (change)="changeDuration(durations)">
+                    <option selected value="0">{{ amt > 1 ? 'Days' : 'Day' }}</option>
+                    <option value="1">{{ amt > 1 ? 'Hours' : 'Hour' }}</option>
+                    <option value="2">{{ amt > 1 ? 'Minutes' : 'Minute' }}</option>
+                </select>
+            </div>
+        </div>
+        <div class="item" *ngIf="duration" style="border-bottom: none;">
+            <div style="width: 100%; height: auto; padding: 10px; background-color: #d9d9d9; color: #fff; font-weight: bold; text-align: center">Slider</div>
         </div>
         <div class="item" id="find" (click)="findAvailable()" [ngClass]="{'disabled': calendar[idx].status !== undefined}">Find Available</div>
         <div class="item" id="days">
@@ -114,16 +130,17 @@
             <div>S</div>
         </div>
         <div id="calendar">
-            <div id="first" [ngStyle]="{'width.px': 60 * firstDay}"></div>
-            <div class="day" *ngFor="let day of calendar; let i = index;" [ngClass]="{'in-range': rangeMode && (i < (idx + 7)) && i >= idx}">
+            <div id="first" [ngStyle]="{'width': (firstDay * 14.275) + '%'}"></div>
+            <div class="day" *ngFor="let day of calendar; let i = index;" [ngClass]="{'in-range': rangeMode && day.status === undefined && (i < (idx + 7)) && i >= idx}">
                 <div class="day-inner" [ngClass]="{'selected': day.date === selectedDate}" (click)="selectDay(day.date, i)">
+                    <div style="position: absolute; left: 50%; top: 3px; transform: translateX(-50%); color: #3367d6; font-size: 11px;" *ngIf="!i || getDay(day.date) === 1">{{ getMonthLabel(day.date) }}</div>
                     {{ getDay(day.date) }}
                     <div class="status {{ day.status !== undefined ? !day.status ? 'g' : day.status === 1 ? 'y' : 'r' : '' }}"></div> 
-                </div>
+                </div> 
             </div>
         </div>
     </div>
-    <div class="right" [ngStyle]="{'padding-left': !scheduleView ? '25px': '0px', 'border-left': !scheduleView ? '1px solid #d9d9d9' : 'none'}">
+    <div class="right" [ngStyle]="{'padding-left': !scheduleView || !isMobile ? '25px': '0px', 'display': (isMobile && !listView) ? 'none' : 'block'}">
         <div class="schedules-con">
             <div class="schedule-con">
                 <div class="schedule-col">
@@ -131,100 +148,66 @@
                     <div class="schedule-val">{{ getSelectedDate() }}</div>
                 </div>
                 <div class="schedule-col">
-                    <div class="schedule-header">Assigned Installer</div>
+                    <div class="schedule-header">Installer</div>
                     <div class="schedule-val" [ngStyle]="{'font-weight': installer ? 'bold' : 'normal', 'color': installer ? '#3367d6': 'gray'}">{{ installer ? installer.name : 'Unassigned' }}</div>
                 </div>
-                <div class="schedule-col last">
+                <div class="schedule-col" *ngIf="scheduleView">
+                    <div class="schedule-header">Start Time</div>
+                    <div class="schedule-val">8AM</div>
+                </div>
+                <div class="schedule-col" *ngIf="scheduleView">
                     <div class="schedule-header">Job Duration</div>
-                    <div class="schedule-val">
-                        <div style="display: inline-flex; align-items: center;">
-                            <input #num class="num" type="number" value="1" (change)="changeAmt(num)">
-                            <select class="sel" #durations (change)="changeDuration(durations)">
-                                <option selected value="0">{{ amt > 1 ? 'Days' : 'Day' }}</option>
-                                <option value="1">{{ amt > 1 ? 'Hours' : 'Hour' }}</option>
-                                <option value="2">{{ amt > 1 ? 'Minutes' : 'Minute' }}</option>
-                            </select>
-                        </div>
-                    </div>
+                    <div class="schedule-val">1 Day</div>
                 </div>
-                <div class="start-time-con" *ngIf="duration">
-                    <div class="start-time-label">Start Time: 8AM</div>
-                    <div class="start-picker">
-                        <div class="picker-line"></div>
-                        <div class="time-unit"><div class="time-unit-inner l">8</div></div>
-                        <div class="time-unit"><div class="time-unit-inner"></div></div>
-                        <div class="time-unit"><div class="time-unit-inner"></div></div>
-                        <div class="time-unit"><div class="time-unit-inner"></div></div>
-                        <div class="time-unit"><div class="time-unit-inner l">9</div></div>
-                        <div class="time-unit"><div class="time-unit-inner"></div></div>
-                        <div class="time-unit"><div class="time-unit-inner"></div></div>
-                        <div class="time-unit"><div class="time-unit-inner"></div></div>
-                        <div class="time-unit"><div class="time-unit-inner l">10</div></div>
-                        <div class="time-unit"><div class="time-unit-inner"></div></div>
-                        <div class="time-unit"><div class="time-unit-inner"></div></div>
-                        <div class="time-unit"><div class="time-unit-inner"></div></div>
-                        <div class="time-unit"><div class="time-unit-inner l">11</div></div>
-                        <div class="time-unit"><div class="time-unit-inner"></div></div>
-                        <div class="time-unit"><div class="time-unit-inner"></div></div>
-                        <div class="time-unit"><div class="time-unit-inner"></div></div>
-                        <div class="time-unit"><div class="time-unit-inner l">12</div></div>
-                        <div class="time-unit"><div class="time-unit-inner"></div></div>
-                        <div class="time-unit"><div class="time-unit-inner"></div></div>
-                        <div class="time-unit"><div class="time-unit-inner"></div></div>
-                        <div class="time-unit"><div class="time-unit-inner l">1</div></div>
-                        <div class="time-unit"><div class="time-unit-inner"></div></div>
-                        <div class="time-unit"><div class="time-unit-inner"></div></div>
-                        <div class="time-unit"><div class="time-unit-inner"></div></div>
-                        <div class="time-unit"><div class="time-unit-inner l">2</div></div>
-                        <div class="time-unit"><div class="time-unit-inner"></div></div>
-                        <div class="time-unit"><div class="time-unit-inner"></div></div>
-                        <div class="time-unit"><div class="time-unit-inner"></div></div>
-                        <div class="time-unit"><div class="time-unit-inner l">3</div></div>
-                        <div class="time-unit"><div class="time-unit-inner"></div></div>
-                        <div class="time-unit"><div class="time-unit-inner"></div></div>
-                        <div class="time-unit"><div class="time-unit-inner"></div></div>
-                        <div class="time-unit"><div class="time-unit-inner l">4</div></div>
-                        <div class="time-unit"><div class="time-unit-inner"></div></div>
-                        <div class="time-unit"><div class="time-unit-inner"></div></div>
-                        <div class="time-unit"><div class="time-unit-inner"></div></div>
-                        <div class="time-unit"><div class="time-unit-inner l">5</div></div>
-                    </div>
-                </div>
+                
             </div>
         </div>
-        <!--
-        <div style="position: relative; width: 100%; height: auto; box-shadow: 0px 0px 5px rgba(0, 0, 0, .3); border-radius: 6px; overflow: hidden;">
-            <div class="installer-header">
-                <div class="installer-header-col">Schedule Date</div>
-                <div class="installer-header-col">Job Duration</div>
-                <div class="installer-header-col">Start - End Time</div>
-                <div class="installer-header-col">Assigned Installer</div>
-                <div class="create" (click)="createSchedule()">Create</div>
+        
+        <div class="work-order" *ngIf="scheduleView" style="flex-wrap: wrap; margin-top: 25px;">
+            <div class="work-order-con" style="width: 100%;">
+                <div class="work-order-header">Work Crew Technitians</div>
+                <div class="work-order-cols">
+                    <div class="work-order-col">
+                        <div class="t">Technitian</div>
+                        <div>Organization Alberto Gutierrez</div>
+                        <div>Johnny Marquez</div>
+                    </div>
+                    <div class="work-order-col">
+                        <div class="t">Description</div>
+                        <div>asdlk d sdal;kfjasdf;l</div>
+                        <div>Johnny Margquez</div>
+                    </div>
+                </div> 
             </div>
-            <div class="installer" style="border: 1px solid #d9d9d9; border-top: none; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;">
-                <div class="installer-col" style="font-weight: bold; color: #3367d6">{{ getSelectedDate() }}</div>
-                <div class="installer-col" style="display: inline-flex; align-items: center;">
-
-                    <input #num class="num" type="number" value="1" (change)="changeAmt(num)">
-                    <select class="sel" #durations (change)="changeDuration(durations)">
-                        <option selected value="0">{{ amt > 1 ? 'Days' : 'Day' }}</option>
-                        <option value="1">{{ amt > 1 ? 'Hours' : 'Hour' }}</option>
-                        <option value="2">{{ amt > 1 ? 'Minutes' : 'Minute' }}</option>
-                    </select>
-
-                </div>
-                <div class="installer-col" style="font-weight: bold; color: #3367d6" *ngIf="!duration">8AM - 5PM</div>
-                <div class="installer-col" style="font-weight: bold; color: #3367d6" *ngIf="duration" style="display: inline-flex; align-items: center;">
-                    <input #inc class="num" type="number" value="8" (change)="changeTime(inc)">
-                    <div style="font-weight: bold; color: #3367d6">{{ (isAm ? 'AM - ' : 'PM - ') + time + (time > 8 ? 'AM' : 'PM')}}</div>
-                </div>
-                <div class="installer-col" [ngStyle]="{'font-weight': installer ? 'bold' : 'normal', 'color': installer ? '#3367d6': 'gray'}">{{ installer ? installer.name : 'Unassigned' }}</div>
+            <div class="work-order-con" style="width: 100%; margin-bottom: 25px;">
+                <div class="work-order-header">Work Crew Compatibility</div>
+                <div class="work-order-cols">
+                    <div class="work-order-col">
+                        <div class="t">Category</div>
+                        <div>Secondary service</div>
+                        <div>Project Preference: Carpet</div>
+                    </div>
+                    <div class="work-order-col">
+                        <div class="t">Work Order Value</div>
+                        <div>Fort Collins Carpet</div>
+                        <div>$133.00</div>
+                    </div>
+                    <div class="work-order-col">
+                        <div class="t">Crew Value</div>
+                        <div>None</div>
+                        <div>175</div>
+                    </div>
+                    <div class="work-order-col">
+                        <div class="t">Comments</div>
+                        <div>;lkajsdf;lkj adsflk dasflk asdf</div>
+                    </div>
+                </div> 
             </div>
         </div>
-    -->
-        <div class="container">
+
+        <div class="container" *ngIf="!scheduleView">
             <div class="item" style="border-bottom: none;">
-                <div class="label">Status:&nbsp;<div id="small" *ngIf="calendar[idx].status === undefined" (click)="findAvailable()">Get Availability</div><div class="{{ !calendar[idx].status ? 'g' : calendar[idx].status === 1 ? 'y' : 'r' }}" id="status" *ngIf="calendar[idx].status !== undefined">{{ getAvailability() }}</div></div>
+                <div class="label" *ngIf="!scheduleView">Status:&nbsp;<div id="small" *ngIf="calendar[idx].status === undefined" (click)="findAvailable()">Get Availability</div><div class="{{ !calendar[idx].status ? 'g' : calendar[idx].status === 1 ? 'y' : 'r' }}" id="status" *ngIf="calendar[idx].status !== undefined">{{ getAvailability() }}</div></div>
                 <div class="items" *ngIf="calendar[idx].status !== undefined && calendar[idx].status !== 2">
                     <div class="selection" (click)="initAvailable(null)" [ngClass]="{'active': availableView === null}">
                         Installers A-Z
@@ -249,7 +232,7 @@
                     </div>
                     <div class="installer-outer" style="position: relative; width: 100%; height: auto;" *ngFor="let item of calendar[idx].installers">
                         <div class="installer" [ngClass]="{'active': installer && (item.name === installer.name)}">
-                            <div class="installer-col in" style="display: inline-flex; align-items: center"><input class="radio" type="radio" name="installer" (change)="selectInstaller(item)">{{ item.name }}</div>
+                            <div class="installer-col in" style="display: inline-flex; align-items: center"><input #elem class="radio" type="radio" name="installer" (click)="selectInstaller(elem, item)">{{ item.name }}</div>
                             <div class="installer-col">Carpet</div>
                             <div class="installer-col">1 Day</div>
                             <div class="installer-right">
@@ -283,106 +266,5 @@
             </div>
         </div>
     </div>
-<!--
-    <div class="left">
-        
-        <div class="item">
-            <div class="label">1-Week Range:</div>
-            <div class="items pill" (click)="initRange()" [ngClass]="{'active': rangeMode}">
-                <div class="slider"></div>
-            </div>
-        </div>
 
-        <div class="item" id="find" (click)="findAvailable()" [ngClass]="{'disabled': calendar[idx].status !== undefined}">Find Available</div>
-        <div class="item" id="days">
-            <div>S</div>
-            <div>M</div>
-            <div>T</div>
-            <div>W</div>
-            <div>T</div>
-            <div>F</div>
-            <div>S</div>
-        </div>
-        <div id="calendar">
-            <div id="first" [ngStyle]="{'width.px': 60 * firstDay}"></div>
-            <div class="day" *ngFor="let day of calendar; let i = index;" [ngClass]="{'in-range': rangeMode && (i < (idx + 7)) && i >= idx}">
-                <div class="day-inner" [ngClass]="{'selected': day.date === selectedDate}" (click)="selectDay(day.date, i)">
-                    {{ getDay(day.date) }}
-                    <div class="status {{ day.status !== undefined ? !day.status ? 'g' : day.status === 1 ? 'y' : 'r' : '' }}"></div> 
-                </div>
-            </div>
-        </div>
-    </div>
--->
-    <!--
-    <div class="right">
-        <div class="item">
-            <div class="label">Schedule Date:&nbsp;<div>{{ getSelectedDate() }}</div></div>
-            <div class="items">
-                <div class="selection active" (click)="initView(false)" [ngClass]="{'active': !installerView}">
-                    Schedule
-                    <div class="side"></div>
-                </div>
-                <div class="selection" style="margin-right: 10px" (click)="initView(true)" [ngClass]="{'active': installerView, 'disabled': calendar[idx].status === undefined || calendar[idx].status === 2}">
-                    Installers
-                    <div class="side"></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="item">
-            <div class="label">Status:&nbsp;<div id="small" *ngIf="calendar[idx].status === undefined" (click)="findAvailable()">Get Availability</div><div class="{{ !calendar[idx].status ? 'g' : calendar[idx].status === 1 ? 'y' : 'r' }}" id="status" *ngIf="calendar[idx].status !== undefined">{{ getAvailability() }}</div></div>
-            <div class="items" *ngIf="installerView">
-                <div class="selection active" (click)="initAvailable(true)" [ngClass]="{'active': availableView}">
-                    Available
-                    <div class="side"></div>
-                </div>
-                <div class="selection" style="margin-right: 10px" (click)="initAvailable(false)" [ngClass]="{'active': !availableView}">
-                    Unavailable
-                    <div class="side"></div>
-                </div>
-            </div> 
-        </div>
-        <div id="view">
-            <div id="slider" [ngStyle]="{'transform': 'translateX(' + (!installerView ? 0 : -50) + '%)'}">
-                <div class="container">
-                    <div class="item" style="border-bottom: none; padding-bottom: 0px;">
-                        <div class="label">Job Duration:&nbsp;<div style="color: gray; font-weight: normal;">IMPLEMENTATION PENDING</div></div>
-                    </div>
-                    <div class="item" style="border-bottom: none; padding-bottom: 0px;">
-                        <div class="label">Start Time:&nbsp;<div style="color: gray; font-weight: normal;">IMPLEMENTATION PENDING</div></div>
-                    </div>
-                    <div class="item" style="border-bottom: none; padding-bottom: 0px;">
-                        <div class="label">Installer:&nbsp;<div style="color: gray; font-weight: normal;">{{ installer ? installer.name : 'UNASSIGNED' }}</div></div>
-                    </div>
-                </div>
-                <div class="container" [ngStyle]="{'height': !installerView ? (420 + 'px') : 'auto'}">
-                    <form *ngIf="availableView">
-                        <div class="installer-header">
-                            <div class="installer-header-col">Name</div>
-                            <div class="installer-header-col">Project Preference</div>
-                            <div class="installer-header-col">SSS Estimate</div>
-                        </div>
-                        <div class="installer" *ngFor="let item of calendar[idx].installers" [ngClass]="{'active': installer && (item.name === installer.name)}">
-                            <div class="installer-col in" style="display: inline-flex; align-items: center"><input type="radio" name="installer" (change)="selectInstaller(item)">{{ item.name }}</div>
-                            <div class="installer-col">Carpet</div>
-                            <div class="installer-col">1 Day</div>
-                            <div class="installer-right">
-                                <i class="fas fa-info-square" style="color: #3367d6; cursor: pointer; font-size: 20px;" title="View Installer Info"></i>
-                                <div style="width: 1px; height: 15px; background-color: #d9d9d9; margin: 0px 17px 0px 15px;"></div>
-                                <div class="score {{ item.score >= 90 ? 'g' : item.score < 90 && item.score >= 80 ? 'y' : item.score < 80 && item.score >= 70 ? 'r' : '' }}">{{ item.score }}</div>
-                            </div>
-                        </div>
-                    </form>
-                    <div style="position: relative; width: 100%; height: auto;" *ngIf="!availableView">
-                        <div class="installer" *ngFor="let item of calendar[idx].unavailables">
-                            <div class="label">{{ item.name }}</div>
-                            <i class="fas fa-info-square" style="color: #3367d6; cursor: pointer; font-size: 20px;" title="View Unavailability Info"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
--->
 </div>
