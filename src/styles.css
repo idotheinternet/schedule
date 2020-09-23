@@ -1,8 +1,9 @@
-body, div, form, input {
+body, div, form, input, h3 {
     margin: 0;
     font-family: 'Lato', sans-serif;
-    font-size: 15px;
-}
-div, form, input {
     box-sizing: border-box;
 }
+body, div, form, input {
+    font-size: 16px;
+}
+

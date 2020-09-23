@@ -1,3 +1,4 @@
+import { IfStmt } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
 import { EmptyError } from 'rxjs';
 
@@ -19,10 +20,85 @@ export interface Day {
   templateUrl: './scheduler.component.html',
   styleUrls: ['./scheduler.component.css']
 })
-export class SchedulerComponent implements OnInit {
+export class SchedulerComponent implements OnInit { 
+
+  aView: boolean;
+  showSchedules: boolean = false;
+  showCategories: boolean = false;
+  showNotes: boolean = false;
+  bestView: boolean = true;
+  editMode: boolean = false;
+  scheduleIdx: number;
+
+  switchView(): void {
+    this.aView = !this.aView;
+  }
+
+  initShowSchedules(): void {
+    this.showSchedules = !this.showSchedules;
+  }
+
+  initShowCategories(): void {
+    this.showCategories = !this.showCategories;
+  }
+ 
+  initShowNotes(): void {
+    this.showNotes = !this.showNotes;
+  }
+  
+  createSchedule(): void {
+    const obj = {
+      date: this.selectedDate,
+      amt: this.amt,
+      duration: this.duration,
+      installer: this.installer,
+      idx: this.idx
+    };
+    if(this.editMode) {
+      this.schedules[this.scheduleIdx] = obj;
+      this.editMode = false;
+    } else {
+      this.schedules.push(obj); 
+    }
+    this.aView = false;
+    this.showSchedules = true;
+    this.resetStuff();
+  }
+
+  resetStuff(): void {
+    this.idx = 0;
+    this.selectedDate = this.calendar[0].date;
+    this.scheduleIdx = null;
+    this.duration = 0;
+    this.amt = 1;
+    this.installer = null;
+  }
+
+  cancelEdit(): void {
+    this.aView = false;
+    this.showSchedules = true;
+    this.editMode = false;
+    this.resetStuff();
+  }
+
+  editSchedule(item: any, idx: number): void {
+    this.selectedDate = item.date;
+    this.scheduleIdx = idx;
+    this.editMode = true;
+    this.idx = item.idx;
+    this.amt = item.amt;
+    this.duration = item.duration;
+    this.installer = item.installer;
+    this.aView = true;
+  }
+
+  removeSchedule(i: number): void {
+    this.schedules.splice(i, 1);
+    if(!this.schedules.length) this.showSchedules = false;
+  }
 
   schedule: any;
-  schedules: any[] = ['9/11/2020'];
+  schedules: any[] = [];
   calendar: Day[];
   selectedDate: Date;
   firstDay: number;
@@ -44,8 +120,6 @@ export class SchedulerComponent implements OnInit {
 
   ngOnInit(): void {
     this.setCalendar();
-    this.getWindowWidth();
-    this.isMobile = window.innerWidth <= 500;
   }
 
   showScheduleView(): void {
@@ -141,8 +215,8 @@ export class SchedulerComponent implements OnInit {
     console.log(this.idx);
   }
 
-  getSelectedDate(): string {
-    return this.selectedDate.toLocaleDateString('default', {month: 'long', day: 'numeric', year: 'numeric'});
+  getSelectedDate(date: Date = null): string {
+    return date ? date.toLocaleDateString('default', {month: 'long', day: 'numeric', year: 'numeric'}) : this.selectedDate.toLocaleDateString('default', {month: 'long', day: 'numeric', year: 'numeric'});
   }
 
   initRange(): void {
@@ -189,9 +263,13 @@ export class SchedulerComponent implements OnInit {
   }
 
   initAvailable(view: boolean): void {
-    this.availableView = view;
-    if(view === null) this.calendar[this.idx].installers.sort((a, b) => Number(a.name.split(" ")[1]) - Number(b.name.split(" ")[1]));
-    if(view) this.calendar[this.idx].installers.sort((a, b) => b.score - a.score);
+    if(view === null) {
+      this.availableView = !this.availableView;
+    } else {
+      this.bestView = view;
+      if(!view) this.calendar[this.idx].installers.sort((a, b) => Number(a.name.split(" ")[1]) - Number(b.name.split(" ")[1]));
+      if(view) this.calendar[this.idx].installers.sort((a, b) => b.score - a.score);
+    }
   }
 
   selectInstaller(elem: HTMLInputElement, installer: Installer): void {

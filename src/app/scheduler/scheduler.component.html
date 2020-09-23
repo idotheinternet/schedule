@@ -1,3 +1,249 @@
+<div id="container">
+    <div id="wo">
+        <!--<h3>Work Order 12345</h3>-->
+        <div class="switch">
+            <div [ngClass]="{'active': !aView}" (click)="switchView()" style="margin-right: 3px">Info</div>
+            <div [ngClass]="{'active': aView}" (click)="switchView()">Scheduler</div>
+        </div>
+        <div class="slide">
+            <div id="left" [ngClass]="{'active': aView}">
+                <div class="left-con" [ngClass]="{'active': !aView}" style="overflow-y: scroll; overflow-x: hidden;"> 
+                    <div class="info">
+                        <i class="fas fa-user-circle"></i>Stephen Baldwin
+                    </div>
+                    <div class="info">
+                        <i class="fas fa-phone-square"></i>(970) 640-5850
+                        <a href="tel:970-640-5850">CALL</a>
+                    </div>
+                    <div class="info">
+                        <i class="fas fa-envelope-square"></i>idotheinternet@gmail.com 
+                        <a href="mailto:idotheinternet@gmail.com">EMAIL</a>
+                    </div>
+                    <div class="info" style="border-bottom: none">
+                        <i class="fas fa-location-circle"></i>6950 East Chenango Ave
+                        <a>OPEN MAP</a>
+                    </div>
+                    <div class="info sub" style="border-bottom: none">
+                        <i class="fas fa-history"></i>Year Built:
+                        <a>2017</a>
+                    </div>
+                    <div class="info sub">
+                        <i class="fas fa-history"></i>Zone:
+                        <a>Denver</a>
+                    </div>
+                    <div class="info" style="border-bottom: none">
+                        <i class="fas fa-tools"></i>In Stock Carpet
+                        <a style="background-color: #fff; color: #3367d6; letter-spacing: normal; font-size: 16px;">133.67 Square Yards</a>
+                    </div>
+                </div>
+                <div class="left-con" [ngClass]="{'active': aView}">
+                    <div class="info">
+                        <i class="fas fa-arrows-h"></i>Duration
+                        <div style="display: inline-flex; align-items: center;">
+                            <input #num class="num" type="number" value="{{ amt }}" (change)="changeAmt(num)">
+                            <select class="sel" #durations (change)="changeDuration(durations)">
+                                <option [attr.selected]="duration === 0 ? '' : null" value="0">{{ amt > 1 ? 'Days' : 'Day' }}</option>
+                                <option [attr.selected]="duration === 1 ? '' : null" value="1">{{ amt > 1 ? 'Hours' : 'Hour' }}</option> 
+                                <option [attr.selected]="duration === 2 ? '' : null" value="2">{{ amt > 1 ? 'Minutes' : 'Minute' }}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="info" style="border-bottom: none">
+                        <i class="fas fa-calendar-week"></i>1 Week Range
+                        <div class="pill" (click)="initRange()" [ngClass]="{'active': rangeMode}">
+                            <div class="slider"></div>
+                        </div>
+                    </div>
+                    <div id="find" (click)="findAvailable()" [ngClass]="{'disabled': calendar[idx].status !== undefined}">Find Available</div>
+                    <div id="days">
+                        <div>S</div>
+                        <div>M</div>
+                        <div>T</div>
+                        <div>W</div>
+                        <div>T</div>
+                        <div>F</div>
+                        <div>S</div>
+                    </div>
+                    <div id="calendar">
+                        <div id="first" [ngStyle]="{'width': (firstDay * 14.275) + '%'}"></div>
+                        <div class="day" *ngFor="let day of calendar; let i = index;" [ngClass]="{'in-range': rangeMode && day.status === undefined && (i < (idx + 7)) && i >= idx}">
+                            <div class="day-inner" [ngClass]="{'selected': day.date === selectedDate}" (click)="selectDay(day.date, i)">
+                                <div class="month-label" *ngIf="!i || getDay(day.date) === 1">{{ getMonthLabel(day.date) }}</div>
+                                <div class="month-day">{{ getDay(day.date) }}</div>
+                                <div class="status {{ day.status !== undefined ? !day.status ? 'g' : day.status === 1 ? 'y' : 'r' : '' }}"></div> 
+                            </div> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="main"> 
+        <div class="items" *ngIf="!aView">
+
+
+            <div class="drop-down">
+                <div class="info drop-btn" (click)="initShowSchedules()" style="padding-top: 0px">
+                    <i class="fas fa-calendar-check"></i>Schedules
+                    <div>
+                        <i class="fas fa-arrow-circle-{{ showSchedules ? 'up' : 'down' }} drop-arrow"></i>
+                    </div>
+                </div>
+                <div class="cards" *ngIf="showSchedules">
+                    <div class="card" *ngFor="let item of schedules; let i = index;">
+                        <div class="info">
+                            <i class="fas fa-calendar-day"></i>{{ getSelectedDate(item.date) }}
+                            <div style="display: inline-flex; align-items: center;">
+                                <i class="fas fa-pencil-alt" style="color: #ffa500; cursor: pointer; font-size: 16px;" (click)="editSchedule(item, i)"></i>
+                                <i class="fas fa-times" style="color: #ff5050; margin-right: 0px; cursor: pointer; font-size: 16px;" (click)="removeSchedule(i)"></i>
+                            </div>
+                        </div>
+                        <div class="info sub" style="border-bottom: none">
+                            <i class="fas fa-calendar-day"></i>Start Time:
+                            <a>8:00AM</a>
+                        </div>
+                        <div class="info sub" style="border-bottom: none">
+                            <i class="fas fa-calendar-day"></i>Duration:
+                            <a>{{ item.amt }} {{ (item.duration ? item.duration > 1 ? 'Minute' : 'Hour' : 'Day') + (item.amt > 1 ? 's' : '') }}</a>
+                        </div>
+                        <div class="info sub" style="border-bottom: none">
+                            <i class="fas fa-calendar-day"></i>Installer:
+                            <a>Carpet Champs</a>
+                        </div>
+                        <div class="info sub" style="border-bottom: none">
+                            <i class="fas fa-calendar-day"></i>Work Crew:
+                            <a class="{{ item.installer ? '' : 'grey' }}">{{ item.installer ? item.installer.name : 'Unassigned' }}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="drop-down">
+                <div class="info drop-btn" (click)="initShowCategories()">
+                    <i class="fas fa-border-left"></i>Work Order Categories
+                    <div>
+                        <i class="fas fa-arrow-circle-{{ showCategories ? 'up' : 'down' }} drop-arrow"></i>
+                    </div>
+                </div>
+                <div class="cards" *ngIf="showCategories"> 
+                    <div class="card">
+                        <div class="info">
+                            <i class="fas fa-folder-tree"></i>Name
+                            <div style="color: gray">
+                                #
+                            </div>
+                        </div>
+                        <div class="info sub" style="border-bottom: none">
+                            <i class="fas fa-folder-tree"></i>Project Preference: Carpet
+                            <a>133</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="drop-down">
+                <div class="info drop-btn" (click)="initShowNotes()">
+                    <i class="fas fa-comment-alt-lines"></i>Work Order Notes
+                    <div>
+                        <i class="fas fa-arrow-circle-{{ showNotes ? 'up' : 'down' }} drop-arrow"></i>
+                    </div>
+                </div>
+                <div class="cards" *ngIf="showNotes">
+                    <div class="card">
+                        <div class="info">
+                            Subject:
+                            <div style="color: gray">
+                                Carpet Roll
+                            </div>
+                        </div>
+                        <div class="info sub" style="border-bottom: none" style="font-weight: normal; color: gray;">
+                            One roll in warehouse (Arrived 5/2/16)
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="info">
+                            Subject:
+                            <div style="color: gray">
+                                Installer
+                            </div>
+                        </div>
+                        <div class="info sub" style="border-bottom: none" style="font-weight: normal; color: gray;">
+                            If you have any issues with the install please call Kathy
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="info">
+                            Subject:
+                            <div style="color: gray">
+                                Home Depot Note
+                            </div>
+                        </div>
+                        <div class="info sub" style="border-bottom: none" style="font-weight: normal; color: gray;">
+                            Measure #11491541 Calc DateTime 04/24/16 10:56:10 One roll in warehouse (Arrived 5/2/16)
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="info"> 
+                            Subject:
+                            <div style="color: gray">
+                                Home Depot Note
+                            </div>
+                        </div>
+                        <div class="info sub" style="border-bottom: none" style="font-weight: normal; color: gray;">
+                            Measure #11491541 Calc DateTime 04/24/16 10:56:10 One roll in warehouse (Arrived 5/2/16)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="items" *ngIf="aView">
+            <div class="info" style="padding-top: 0px; border-bottom: none">
+                <i class="fas fa-calendar-day"></i>{{ !editMode ? 'New' : 'Current' }} Schedule:&nbsp;<span style="color: #3367d6">{{ getSelectedDate() }}</span>
+                <a (click)="cancelEdit()" style="background-color: #ff5050; margin-right: 10px;" *ngIf="editMode">CANCEL</a>
+                <a [ngClass]="{'disabled': calendar[idx].status === undefined || calendar[idx].status === 2}" (click)="createSchedule()" [ngStyle]="{'margin-left': editMode ? 'unset' : 'auto'}">{{ !editMode ? 'CREATE' : 'SAVE CHANGES' }}</a>
+            </div>
+            <div class="info sub" style="border-bottom: none">
+                <i class="fas fa-calendar-day"></i>Start Time:&nbsp;<span style="color: #3367d6">8:00AM</span>
+            </div>
+            <div class="info sub" style="border-bottom: none">
+                <i class="fas fa-calendar-day"></i>Duration:&nbsp;<span style="color: #3367d6">{{ amt }} {{ (duration ? duration > 1 ? 'Minute' : 'Hour' : 'Day') + (amt > 1 ? 's' : '') }}</span>
+            </div>
+            <div class="info sub">
+                <i class="fas fa-calendar-day"></i>Work Crew:&nbsp;<span [ngStyle]="{'font-weight': installer ? 'bold' : 'normal', 'color': installer ? '#3367d6': 'gray'}">{{ installer ? installer.name : 'Unassigned' }}</span>
+            </div>
+            <div class="info" style="border-bottom: none;">
+                <i class="fas fa-question-square"></i>Status:&nbsp;<span class="{{ calendar[idx].status !== undefined ? !calendar[idx].status ? 'g' : calendar[idx].status === 1 ? 'y' : 'r' : 'grey' }}">{{ calendar[idx].status !== undefined ? getAvailability() : 'NOT LOADED' }}</span>
+                <a *ngIf="calendar[idx].status === undefined" (click)="findAvailable()">LOAD AVAILABLITY</a> 
+                <div class="switch" *ngIf="calendar[idx].status !== undefined && calendar[idx].status !== 2" style="position: absolute; top: 50%; left: 100%; transform: translate(-100%, -50%); width: 250px;">
+                    <div [ngClass]="{'active': availableView}" (click)="initAvailable(null)" style="margin-right: 3px">Available</div>
+                    <div (click)="initAvailable(null)" [ngClass]="{'active': !availableView}">Unavailable</div>
+                </div>
+            </div>
+            <div style="position: relative; width: 100%; height: calc(100% - 175px); overflow: hidden; border-top: 1px solid #d9d9d9" *ngIf="calendar[idx].status !== undefined && calendar[idx].status !== 2">
+                <div class="info installers">
+                    <div class="installer-col h">Name</div>
+                    <div class="installer-col h hl">{{ !availableView ? 'Reasons' : 'Project Preference' }}</div>
+                    <div class="installer-col h" *ngIf="availableView">SSS</div>
+                    <div class="switch" style="position: absolute; top: 50%; left: 100%; transform: translate(-100%, -50%); width: 250px;" *ngIf="availableView">
+                        <div (click)="initAvailable(true)" [ngClass]="{'active': bestView}" style="margin-right: 3px">Best Fit</div>
+                        <div (click)="initAvailable(false)" [ngClass]="{'active': !bestView}">A-Z</div>
+                    </div>
+                </div>
+                <div class="inst-con">
+                    <div class="info installers" *ngFor="let item of calendar[idx][availableView ? 'installers' : 'unavailables']">
+                        <div class="installer-col">
+                            <input *ngIf="availableView" #elem class="radio" type="radio" name="installer" (click)="selectInstaller(elem, item)" style="width: 14px; height: 14px; padding: unset; margin-right: 5px;"><span [ngClass]="{'h': installer && (item.name === installer.name)}">{{ item.name }}</span>
+                        </div>
+                        <div class="installer-col hl">
+                            {{ availableView ? 'Carpet' : 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam' }}
+                        </div>
+                        <div class="installer-col" *ngIf="availableView">1 Day</div>
+                        <div *ngIf="availableView" class="score" [ngClass]="{'g': item.score >= 90, 'y': item.score < 90 && item.score >= 80, 'r': item.score < 80 && item.score >= 70}">{{ item.score }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!--
 <div class="customer-info">
     <div class="customer-labels">
@@ -84,7 +330,7 @@
         </div> 
     </div>
 </div>
--->
+
 <div id="nav">
     <div class="border-bottom"></div>
     <div class="nav-item" *ngFor="let item of schedules" (click)="showScheduleView()" [ngClass]="{'active': scheduleView}">
@@ -95,7 +341,7 @@
         New Schedule +
         <div class="nav-pointer"></div>
     </div>
-    <!--<div class="create" style="border-radius: 6px">Create</div>-->
+
 </div>
 <div id="main">
     <div class="left" *ngIf="!scheduleView" [ngStyle]="{'display': (isMobile && listView) ? 'none' : 'block'}">
@@ -268,3 +514,4 @@
     </div>
 
 </div>
+-->
